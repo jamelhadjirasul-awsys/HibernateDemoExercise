@@ -7,6 +7,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+/**
+ * Student class represents the Student entity and maps to the 
+ * "student" table in the database.
+ */
 @Entity 
 @Table(name = "student")
 public class Student {
@@ -66,6 +70,7 @@ public class Student {
         this.email = email;
     }
 
+    // override toString method
     @Override 
     public String toString() {
         return "Student [id=" + 

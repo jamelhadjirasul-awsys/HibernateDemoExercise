@@ -7,6 +7,10 @@ import jakarta.transaction.Transactional;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
+/**
+ * StudentDaoImplement class implements the StudentDao interface and provides 
+ * the implementation for CRUD operations on Student entities.
+ */
 @Repository 
 public class StudentDaoImplement implements StudentDao {
 

@@ -3,6 +3,10 @@ package com.spring.hibernate_demo.dao;
 import com.spring.hibernate_demo.entity.Student;
 import java.util.List;
 
+/**
+ * StudentDao interface defines the methods for 
+ * CRUD operations on Student entities.
+ */
 public interface StudentDao {
 
     void save(Student theStudent);

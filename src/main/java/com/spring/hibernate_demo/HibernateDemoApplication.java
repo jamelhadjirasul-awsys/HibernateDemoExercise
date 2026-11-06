@@ -10,6 +10,10 @@ import org.springframework.context.annotation.Bean;
 import com.spring.hibernate_demo.dao.StudentDao;
 import com.spring.hibernate_demo.entity.Student;
 
+/**
+ * Main class that bootstraps the Spring Boot application and demonstrates
+ * CRUD operations on Student entities using Hibernate.
+ */
 @SpringBootApplication
 public class HibernateDemoApplication {
 
@@ -34,7 +38,9 @@ public class HibernateDemoApplication {
 	private void createStudent(StudentDao studentDao){
 		// create the student object
 		System.out.println("Creating student information...");
-		Student student = new Student("Naruto", "Uzumaki", "naruto.uzumaki@example.com");
+		Student student = new Student("Naruto", 
+									  "Uzumaki", 
+									  "naruto.uzumaki@example.com");
 	
 		// save the student object
 		System.out.println("Saving student information...");
