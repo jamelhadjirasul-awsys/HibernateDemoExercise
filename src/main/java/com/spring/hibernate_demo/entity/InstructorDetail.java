@@ -32,6 +32,7 @@ public class InstructorDetail {
     public InstructorDetail() {
     }
 
+    // Creates instructor details with a subject and hobby.
     public InstructorDetail(String subject, String hobby) {
         this.subject = subject;
         this.hobby = hobby;
@@ -79,6 +80,7 @@ public class InstructorDetail {
         return instructor;
     }
 
+    // Sets the instructor associated with these details.
     public void setInstructor(Instructor instructor) {
         this.instructor = instructor;
     }

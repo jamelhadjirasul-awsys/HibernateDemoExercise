@@ -54,11 +54,20 @@ public class Course {
                 inverseJoinColumns = @JoinColumn(name = "student_id"))
     private List<Student> students;
 
+    // Adds a student to this course.
     public void addStudent(Student stud) {
         if(students == null) {
             students = new ArrayList<>();
         }
         students.add(stud);
+    }
+
+     // Adds a review to this course.
+    public void addReview(Review rev) {
+        if(review == null) {
+            review = new ArrayList<>();
+        }
+        review.add(rev);
     }
 
     @Override
@@ -97,13 +106,6 @@ public class Course {
 
     public void setInstructor(Instructor instructor) {
         this.instructor = instructor;
-    }
-
-    public void addReview(Review rev) {
-        if(review == null) {
-            review = new ArrayList<>();
-        }
-        review.add(rev);
     }
 
     public List<Review> getReview() {

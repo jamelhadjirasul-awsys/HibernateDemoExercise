@@ -48,6 +48,21 @@ public class Instructor {
                                                 CascadeType.REFRESH})
     private List<Course> courses;
 
+    // Associates a course with this instructor and updates the course's instructor.
+    public void add(Course tCourse) {
+        // initializes list if it's null
+        if(this.courses == null) {
+            this.courses = new ArrayList<>();
+        }
+
+        // add the course to instructor's list
+        this.courses.add(tCourse);
+        
+        // tell course who instructor is
+        // 'this' refers to the current Instructor object
+        tCourse.setInstructor(this);
+    }
+    
     public Instructor() {
     }
 
@@ -102,21 +117,6 @@ public class Instructor {
         return "Instructor [id=" + id + ", firstName=" + firstName 
                         + ", lastName=" + lastName + ", email=" + email 
                         + ", instructorDetails=" + instructorDetails + "]";
-    }
-
-    // a convenience method to link the two objects Course and Instructor
-    public void add(Course tCourse) {
-        // initializes list if it's null
-        if(this.courses == null) {
-            this.courses = new ArrayList<>();
-        }
-
-        // add the course to instructor's list
-        this.courses.add(tCourse);
-        
-        // tell course who instructor is
-        // 'this' refers to the current Instructor object
-        tCourse.setInstructor(this);
     }
 
     public List<Course> getCourses() {

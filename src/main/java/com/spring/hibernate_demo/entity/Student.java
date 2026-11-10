@@ -41,6 +41,7 @@ public class Student {
                             CascadeType.REFRESH})
     private List<Course> courses;
 
+    // Enrolls this student in a course.
     public void addCourse(Course course) {
         if(courses == null) {
             courses = new ArrayList<>();

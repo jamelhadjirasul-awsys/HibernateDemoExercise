@@ -25,6 +25,7 @@ public class Review {
     public Review() {
     }
 
+    // Creates a review with the given comment.
     public Review(String comments) {
         this.comments = comments;
     }
