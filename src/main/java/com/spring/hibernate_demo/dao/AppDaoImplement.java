@@ -3,12 +3,17 @@ package com.spring.hibernate_demo.dao;
 import org.springframework.stereotype.Repository;
 import com.spring.hibernate_demo.entity.Instructor;
 import com.spring.hibernate_demo.entity.InstructorDetail;
+import com.spring.hibernate_demo.entity.Student;
 import com.spring.hibernate_demo.entity.Course;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import java.util.List;
 
+/**
+ * Provides database operations for the application's instructor, course,
+ * and student entities.
+ */
 @Repository 
 public class AppDaoImplement implements AppDao {
 
@@ -149,4 +154,77 @@ public class AppDaoImplement implements AppDao {
 
         return course;
     }
+
+    // implement findCourseAndStudentByCourseId method
+    @Override 
+    public Course findCourseAndStudentByCourseId(int theId) {
+        // create query
+        TypedQuery<Course> query = em.createQuery(
+                "SELECT c FROM Course c "
+                + "JOIN FETCH c.students "
+                + "WHERE c.id=:data", Course.class);
+        query.setParameter("data", theId);
+
+        // execute query
+        Course course = query.getSingleResult();
+
+        return course;
+    }
+
+    // implement findStudentAndCoursesByStudent method
+    @Override 
+    public Student findStudentAndCoursesByStudentId(int theId) {
+        // create query
+        TypedQuery<Student> query = em.createQuery(
+                "SELECT s FROM Student s "
+                + "JOIN FETCH s.courses "
+                + "WHERE s.id=:data", Student.class);
+        query.setParameter("data", theId);
+
+        // execute query
+        Student student = query.getSingleResult();
+
+        return student;
+    }
+
+    // implement update student method
+    @Override 
+    @Transactional 
+    public void update(Student student) {
+        em.merge(student);
+    }
+
+    // implement deleteCourseById method
+    @Override 
+    @Transactional 
+    public void deleteCourseById(int theId) {
+        // Retrieve the course
+        Course c = em.find(Course.class, theId);
+
+        // Delete the course
+        em.remove(c);
+    }
+
+    // implement deleteStudentById method
+    @Override 
+    @Transactional 
+    public void deleteStudentByID(int theId) {
+        // retrieve student
+        Student student = em.find(Student.class, theId);
+    
+        if (student != null) {
+            // get the courses
+            List<Course> courses = student.getCourses();
+
+            // break the associations of courses for student
+            for(Course c: courses) {
+                c.getStudents().remove(student);
+            }
+        }
+
+        // delete only the student
+        // does not include
+        em.remove(student);
+    }
+
 }

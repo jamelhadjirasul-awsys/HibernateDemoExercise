@@ -14,6 +14,11 @@ import jakarta.persistence.OneToMany;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Represents an instructor and maps to the {@code instructor} table.
+ * An instructor has associated instructor details and may be associated
+ * with multiple courses.
+ */
 @Entity 
 @Table (name="instructor")
 public class Instructor {

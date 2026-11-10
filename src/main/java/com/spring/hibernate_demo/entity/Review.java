@@ -7,6 +7,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;;
 
+/**
+ * Represents a review comment for a course and maps to the {@code review} table.
+ */
 @Entity 
 @Table(name="review")
 public class Review {

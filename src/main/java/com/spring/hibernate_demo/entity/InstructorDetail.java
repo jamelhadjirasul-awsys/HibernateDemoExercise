@@ -9,6 +9,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.CascadeType;
 
+/**
+ * Represents an instructor's subject and hobby details and maps to the
+ * {@code instructor_detail} table.
+ * Each detail record is associated with an instructor.
+ */
 @Entity
 @Table(name="instructor_detail")
 public class InstructorDetail {

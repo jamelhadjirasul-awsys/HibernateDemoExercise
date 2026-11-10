@@ -9,33 +9,64 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Represents a course and maps to the {@code course} table.
+ * A course can be associated with an instructor, multiple reviews, and
+ * multiple students.
+ */
 @Entity
 @Table(name="course")
 public class Course {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column (name = "id")
     private int id;
 
-    @Column(name="title")
+    @Column (name = "title")
     private String title;
 
-    @ManyToOne(cascade= {CascadeType.DETACH,
-                        CascadeType.MERGE,
-                        CascadeType.PERSIST,
-                        CascadeType.REFRESH})
-    @JoinColumn(name="instructor_id")
+    @ManyToOne (cascade = {CascadeType.DETACH,
+                            CascadeType.MERGE,
+                            CascadeType.PERSIST,
+                            CascadeType.REFRESH})
+    @JoinColumn (name = "instructor_id")
     private Instructor instructor;
 
-    @OneToMany(fetch= FetchType.LAZY, cascade=CascadeType.ALL)
-    @JoinColumn(name="course_id")
+    @OneToMany (fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+    @JoinColumn (name = "course_id")
     private List<Review> review;
+
+    @ManyToMany (fetch = FetchType.LAZY,
+                cascade = {CascadeType.DETACH,
+                            CascadeType.MERGE,
+                            CascadeType.PERSIST,
+                            CascadeType.REFRESH})
+    @JoinTable (name = "course_student",
+                joinColumns = @JoinColumn(name = "course_id"),
+                inverseJoinColumns = @JoinColumn(name = "student_id"))
+    private List<Student> students;
+
+    public void addStudent(Student stud) {
+        if(students == null) {
+            students = new ArrayList<>();
+        }
+        students.add(stud);
+    }
+
+    @Override
+    public String toString() {
+        return "Course [id=" + id 
+                    + ", title=" 
+                    + title + "]";
+    }
 
     public Course() {
     }
@@ -60,11 +91,6 @@ public class Course {
         this.title = title;
     }
 
-    @Override
-    public String toString() {
-        return "Course [id=" + id + ", title=" + title + ", instructor=" + instructor + ", review=" + review + "]";
-    }
-
     public Instructor getInstructor() {
         return instructor;
     }
@@ -87,4 +113,16 @@ public class Course {
     public void setReview(List<Review> review) {
         this.review = review;
     }
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
+
+
+
+    
 }
