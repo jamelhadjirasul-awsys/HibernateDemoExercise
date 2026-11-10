@@ -10,9 +10,8 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.CascadeType;
 
 /**
- * Represents an instructor's subject and hobby details and maps to the
- * {@code instructor_detail} table.
- * Each detail record is associated with an instructor.
+ * Represents an instructor's subject and hobby details mapped to the
+ * {@code instructor_detail} database table.
  */
 @Entity
 @Table(name="instructor_detail")
@@ -29,15 +28,6 @@ public class InstructorDetail {
     @Column(name="hobby")
     private String hobby;
 
-    public InstructorDetail() {
-    }
-
-    // Creates instructor details with a subject and hobby.
-    public InstructorDetail(String subject, String hobby) {
-        this.subject = subject;
-        this.hobby = hobby;
-    }
-
     //@OneToOne(mappedBy="instructorDetails", cascade= CascadeType.ALL)
     @OneToOne(mappedBy="instructorDetails", cascade= {CascadeType.DETACH,
                                                       CascadeType.MERGE,
@@ -45,6 +35,22 @@ public class InstructorDetail {
                                                       CascadeType.REFRESH})
     
     private Instructor instructor;
+
+    /** 
+     * Default no-arg constructor required by JPA. 
+     */
+    public InstructorDetail() {
+    }
+
+    /**
+     * Constructs instructor details with a specified subject and hobby.
+     * @param subject the main subject taught by the instructor
+     * @param hobby the instructor's primary hobby
+     */
+    public InstructorDetail(String subject, String hobby) {
+        this.subject = subject;
+        this.hobby = hobby;
+    }
 
     public int getId() {
         return id;
@@ -70,21 +76,21 @@ public class InstructorDetail {
         this.hobby = hobby;
     }
 
+    public Instructor getInstructor() {
+        return instructor;
+    }
+
+    /**
+     * Sets the instructor associated with these details.
+     * @param instructor the instructor object to link
+     */
+    public void setInstructor(Instructor instructor) {
+        this.instructor = instructor;
+    }
+
     @Override
     public String toString() {
         return "InstructorDetail [id=" + id + ", subject=" 
                                 + subject + ", hobby=" + hobby + "]";
     }
-
-    public Instructor getInstructor() {
-        return instructor;
-    }
-
-    // Sets the instructor associated with these details.
-    public void setInstructor(Instructor instructor) {
-        this.instructor = instructor;
-    }
-
-    
-    
 }

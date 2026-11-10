@@ -11,77 +11,95 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 
 /**
- * Provides database operations for the application's instructor, course,
- * and student entities.
+ * Provides DAO implementation for managing Instructor, Course, 
+ * Review, and Student entities using JPA EntityManager.
  */
 @Repository 
 public class AppDaoImplement implements AppDao {
 
     private EntityManager em;
 
+    /**
+     * Constructs the DAO implementation with injected EntityManager.
+     * @param em the JPA entity manager instance
+     */
     public AppDaoImplement(EntityManager em) {
         this.em = em;
     }
 
-    // implement save instructor method
+    /**
+     * Persists a new instructor along with cascade-enabled relationships.
+     * @param theInstructor the instructor entity to save
+     */
     @Override 
     @Transactional 
     public void save(Instructor theInstructor) {
         em.persist(theInstructor);
     }
 
-    // implement findInstructorById method
+    /**
+     * Retrieves an instructor by primary key ID.
+     * @param theId the instructor ID
+     * @return the matching {@link Instructor} or null if not found
+     */
     @Override 
     public Instructor findInstructorById(int theId) {
         return em.find(Instructor.class, theId);
     }
 
-    // implement deleteInstructorId method
+    /**
+     * Deletes an instructor along with their 
+     * associated courses via cascade remove.
+     * @param theId the instructor ID to delete
+     */
     @Override 
     @Transactional 
     public void deleteInstructorWithCoursesById(int theId) {
-        // retrive the instructor
         Instructor in = em.find(Instructor.class, theId);
-
-        // delete the instructor
         em.remove(in);
     }
 
-    // implement findInstructorDetailById method
+   /**
+     * Retrieves instructor details by primary key ID.
+     * @param theId the instructor detail ID
+     * @return the matching {@link InstructorDetail} entity
+     */
     @Override
     public InstructorDetail findInstructorDetailById(int theId) {
         return em.find(InstructorDetail.class, theId);
     }
 
-    // // implement deleteInstructorDetail method
     // @Override
     // @Transactional 
     // public void deleteInstructorDetail(int theId) {
     //     // retrieve instructor detail
-    //     InstructorDetail instructorDetails = em.find(InstructorDetail.class, theId);
+    //     InstructorDetail instructorDetails 
+    //          = em.find(InstructorDetail.class, theId);
 
     //     // delete instructor detail
     //     em.remove(instructorDetails);
     // }
 
-    // implement deleteInstructorDetail method -NOT CASCADING
+    /**
+     * Deletes instructor details without deleting the 
+     * associated instructor (non-cascading).
+     * @param theId the instructor detail ID to remove
+     */
     @Override
     @Transactional 
     public void deleteInstructorDetail(int theId) {
-        // retrieve instructor detail
         InstructorDetail instructorDetails = em.find(InstructorDetail.class, theId);
-
-        // remove the associated object reference
         instructorDetails.getInstructor().setInstructorDetails(null);
-
-        // delete instructor detail
         em.remove(instructorDetails);
     }
 
-    // implement findCoursesByInstructorId method
+    /**
+     * Retrieves all courses taught by a specific instructor ID.
+     * @param theId the instructor ID
+     * @return list of courses linked to the given instructor
+     */
     @Override 
     public List<Course> findCoursesByInstructorId(int theId) {
-        // create query
         TypedQuery<Course> query = em.createQuery(
                             "FROM Course WHERE instructor.id=data", Course.class);
         query.setParameter("data", theId);
@@ -90,7 +108,12 @@ public class AppDaoImplement implements AppDao {
         return courses;
     }
     
-    // implement findInstructorByIdJoinFetch method
+    /**
+     * Fetches an instructor along with courses and details 
+     * in a single SQL query using JOIN FETCH.
+     * @param theId the instructor ID
+     * @return the populated {@link Instructor} object
+     */
     @Override 
     public Instructor findInstructorByIdJoinFetch(int theId) {
         // create query
@@ -106,124 +129,132 @@ public class AppDaoImplement implements AppDao {
         return in;
     }
 
-    // implement update method
+    /**
+     * Updates an existing instructor's record in the database.
+     * @param in the instructor entity with updated properties
+     */
     @Override 
     @Transactional 
     public void update(Instructor in) {
         em.merge(in);
     }
 
-    // implement deleteInstructorById method
+    /**
+     * Deletes an instructor while preserving their associated 
+     * courses (unlinks the instructor).
+     * @param theId the instructor ID to delete
+     */
     @Override 
     @Transactional 
     public void deleteInstructorById(int theId) {
-        // retrieve instructor
         Instructor in = em.find(Instructor.class, theId);
 
-        // break the associations of courses for instructor
         List<Course> courses = in.getCourses();
         for(Course c: courses) {
-            // remove the instructor from the courses
             c.setInstructor(null);
         }
-
-        // delete only the instructor
-        // does not include courses associated
         em.remove(in);
     }
 
-    // implement save Course method
+    /**
+     * Persists a course entity.
+     * @param theCourse the course to save
+     */
     @Override 
     @Transactional 
     public void save(Course theCourse) {
         em.persist(theCourse);
     }
 
-    // implement findCourseAndReviewsByCourseId method
+    /**
+     * Fetches a course along with its associated reviews using JOIN FETCH.
+     * @param theId the course ID
+     * @return the {@link Course} containing initialized reviews
+     */
     @Override 
     public Course findCourseAndReviewsByCourseId(int theId) {
-        // create query
         TypedQuery<Course> query = em.createQuery(
                 "SELECT c FROM Course c "
                 + "JOIN FETCH c.review "
                 + "WHERE c.id=:data", Course.class);
         query.setParameter("data", theId);
 
-        // execute query
         Course course = query.getSingleResult();
-
         return course;
     }
 
-    // implement findCourseAndStudentByCourseId method
+    /**
+     * Fetches a course along with enrolled students using JOIN FETCH.
+     * @param theId the course ID
+     * @return the {@link Course} containing initialized student list
+     */
     @Override 
     public Course findCourseAndStudentByCourseId(int theId) {
-        // create query
         TypedQuery<Course> query = em.createQuery(
                 "SELECT c FROM Course c "
                 + "JOIN FETCH c.students "
                 + "WHERE c.id=:data", Course.class);
         query.setParameter("data", theId);
 
-        // execute query
         Course course = query.getSingleResult();
-
         return course;
     }
 
-    // implement findStudentAndCoursesByStudent method
+    /**
+     * Fetches a student along with enrolled courses using JOIN FETCH.
+     * @param theId the student ID
+     * @return the {@link Student} containing initialized course list
+     */
     @Override 
     public Student findStudentAndCoursesByStudentId(int theId) {
-        // create query
         TypedQuery<Student> query = em.createQuery(
                 "SELECT s FROM Student s "
                 + "JOIN FETCH s.courses "
                 + "WHERE s.id=:data", Student.class);
         query.setParameter("data", theId);
 
-        // execute query
         Student student = query.getSingleResult();
-
         return student;
     }
 
-    // implement update student method
+    /**
+     * Updates an existing student entity.
+     * @param student the student entity to update
+     */
     @Override 
     @Transactional 
     public void update(Student student) {
         em.merge(student);
     }
 
-    // implement deleteCourseById method
+    /**
+     * Deletes a course by its primary key ID.
+     * @param theId the course ID to remove
+     */
     @Override 
     @Transactional 
     public void deleteCourseById(int theId) {
-        // Retrieve the course
         Course c = em.find(Course.class, theId);
-
-        // Delete the course
         em.remove(c);
     }
 
-    // implement deleteStudentById method
+    /**
+     * Deletes a student by ID while unlinking them from enrolled courses 
+     * to preserve course data.
+     * @param theId the student ID to remove
+     */
     @Override 
     @Transactional 
     public void deleteStudentByID(int theId) {
-        // retrieve student
         Student student = em.find(Student.class, theId);
     
         if (student != null) {
-            // get the courses
             List<Course> courses = student.getCourses();
 
-            // break the associations of courses for student
             for(Course c: courses) {
                 c.getStudents().remove(student);
             }
         }
-
-        // delete only the student
-        // does not include
         em.remove(student);
     }
 

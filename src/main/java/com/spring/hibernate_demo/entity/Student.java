@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a student and maps to the {@code student} table.
- * A student may be enrolled in multiple courses.
+ * Represents a student mapped to the {@code student} database table.
+ * Manages relationships with enrolled courses.
  */
 @Table(name = "student")
 public class Student {
@@ -40,8 +40,29 @@ public class Student {
                             CascadeType.PERSIST,
                             CascadeType.REFRESH})
     private List<Course> courses;
+ 
+    /** 
+     * Default no-arg constructor required by JPA. 
+     */
+    public Student() {
+    }
 
-    // Enrolls this student in a course.
+    /**
+     * Constructs a new Student with personal details.
+     * @param firstName the student's first name
+     * @param lastName the student's last name
+     * @param email the student's email address
+     */
+    public Student(String firstName, String lastName, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
+
+    /**
+     * Convenience method to enroll this student in a course bi-directionally.
+     * @param course the course to enroll in
+     */
     public void addCourse(Course course) {
         if(courses == null) {
             courses = new ArrayList<>();
@@ -50,21 +71,20 @@ public class Student {
         course.addStudent(this);
     }
 
+    @Override 
+    public String toString() {
+        return "Student [id=" + 
+                        id + ", firstName=" + firstName + 
+                        ", lastName=" + lastName + 
+                        ", email=" + email + "]";  
+    }
+
     public List<Course> getCourses() {
         return courses;
     }
 
     public void setCourses(List<Course> courses) {
         this.courses = courses;
-    }
-
-    public Student() {
-    }
-
-    public Student(String firstName, String lastName, String email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
     }
 
     public int getId() {
@@ -98,15 +118,4 @@ public class Student {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    // override toString method
-    @Override 
-    public String toString() {
-        return "Student [id=" + 
-                        id + ", firstName=" + firstName + 
-                        ", lastName=" + lastName + 
-                        ", email=" + email + "]";  
-    }
-
-
 }

@@ -17,9 +17,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Represents a course and maps to the {@code course} table.
- * A course can be associated with an instructor, multiple reviews, and
- * multiple students.
+ * Represents a course mapped to the {@code course} database table.
+ * Manages relationships with an instructor, reviews, and enrolled students.
  */
 @Entity
 @Table(name="course")
@@ -54,7 +53,24 @@ public class Course {
                 inverseJoinColumns = @JoinColumn(name = "student_id"))
     private List<Student> students;
 
-    // Adds a student to this course.
+    /** 
+     * Default no-arg constructor required by JPA. 
+     */
+    public Course() {
+    }
+
+    /**
+     * Constructs a new Course with the specified title.
+     * @param title the course title
+     */
+    public Course(String title) {
+        this.title = title;
+    }
+
+    /**
+     * Convenience method to enroll a student in this course.
+     * @param stud the student to add
+     */
     public void addStudent(Student stud) {
         if(students == null) {
             students = new ArrayList<>();
@@ -62,7 +78,10 @@ public class Course {
         students.add(stud);
     }
 
-     // Adds a review to this course.
+    /**
+     * Convenience method to add a review to this course.
+     * @param rev the review to add
+     */
     public void addReview(Review rev) {
         if(review == null) {
             review = new ArrayList<>();
@@ -75,13 +94,6 @@ public class Course {
         return "Course [id=" + id 
                     + ", title=" 
                     + title + "]";
-    }
-
-    public Course() {
-    }
-
-    public Course(String title) {
-        this.title = title;
     }
 
     public int getId() {

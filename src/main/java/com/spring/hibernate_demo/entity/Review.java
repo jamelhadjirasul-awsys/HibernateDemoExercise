@@ -8,7 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;;
 
 /**
- * Represents a review comment for a course and maps to the {@code review} table.
+ * Represents a review comment for a course and maps to the 
+ * {@code review} database table.
  */
 @Entity 
 @Table(name="review")
@@ -22,10 +23,16 @@ public class Review {
     @Column (name="comments")
     private String comments;
 
+    /** 
+     * Default no-arg constructor required by JPA. 
+     */
     public Review() {
     }
 
-    // Creates a review with the given comment.
+    /**
+     * Constructs a new Review with the specified comment string.
+     * @param comments the feedback or review text
+     */
     public Review(String comments) {
         this.comments = comments;
     }

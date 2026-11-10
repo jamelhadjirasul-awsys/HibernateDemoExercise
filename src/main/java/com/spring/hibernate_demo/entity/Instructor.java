@@ -15,9 +15,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Represents an instructor and maps to the {@code instructor} table.
- * An instructor has associated instructor details and may be associated
- * with multiple courses.
+ * Represents an instructor mapped to the {@code instructor} database table.
+ * Manages relationships with instructor details and taught courses.
  */
 @Entity 
 @Table (name="instructor")
@@ -48,28 +47,42 @@ public class Instructor {
                                                 CascadeType.REFRESH})
     private List<Course> courses;
 
-    // Associates a course with this instructor and updates the course's instructor.
-    public void add(Course tCourse) {
-        // initializes list if it's null
-        if(this.courses == null) {
-            this.courses = new ArrayList<>();
-        }
-
-        // add the course to instructor's list
-        this.courses.add(tCourse);
-        
-        // tell course who instructor is
-        // 'this' refers to the current Instructor object
-        tCourse.setInstructor(this);
-    }
-    
+    /** 
+     * Default no-arg constructor required by JPA. 
+     */
     public Instructor() {
     }
 
+    /**
+     * Constructs a new Instructor with personal details.
+     * @param firstName the instructor's first name
+     * @param lastName the instructor's last name
+     * @param email the instructor's email address
+     */
     public Instructor(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+    }
+
+    /**
+     * Convenience method to associate a course with 
+     * this instructor bi-directionally.
+     * @param tCourse the course to assign to this instructor
+     */
+    public void add(Course tCourse) {
+        if(this.courses == null) {
+            this.courses = new ArrayList<>();
+        }
+        this.courses.add(tCourse);
+        tCourse.setInstructor(this);
+    }
+    
+    @Override
+    public String toString() {
+        return "Instructor [id=" + id + ", firstName=" + firstName 
+                        + ", lastName=" + lastName + ", email=" + email 
+                        + ", instructorDetails=" + instructorDetails + "]";
     }
 
     public int getId() {
@@ -110,13 +123,6 @@ public class Instructor {
 
     public void setInstructorDetails(InstructorDetail instructorDetails) {
         this.instructorDetails = instructorDetails;
-    }
-
-    @Override
-    public String toString() {
-        return "Instructor [id=" + id + ", firstName=" + firstName 
-                        + ", lastName=" + lastName + ", email=" + email 
-                        + ", instructorDetails=" + instructorDetails + "]";
     }
 
     public List<Course> getCourses() {

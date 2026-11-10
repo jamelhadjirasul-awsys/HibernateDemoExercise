@@ -1,15 +1,12 @@
 package com.spring.hibernate_demo;
 
 import java.util.List;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
 import com.spring.hibernate_demo.dao.AppDao;
 import com.spring.hibernate_demo.dao.StudentDao;
-
 import com.spring.hibernate_demo.entity.Student;
 import com.spring.hibernate_demo.entity.Course;
 import com.spring.hibernate_demo.entity.Review;
@@ -17,8 +14,8 @@ import com.spring.hibernate_demo.entity.Instructor;
 import com.spring.hibernate_demo.entity.InstructorDetail;
 
 /**
- * Main class that bootstraps the Spring Boot application and demonstrates
- * CRUD operations on Student entities using Hibernate.
+ * Main application class bootstrapping Spring Boot and executing
+ * Hibernate/JPA CRUD operations via {@link CommandLineRunner}.
  */
 @SpringBootApplication
 public class HibernateDemoApplication {
@@ -40,6 +37,11 @@ public class HibernateDemoApplication {
 	// 	};
 	// }
 
+	/**
+     * Executes database operations sequentially on startup.
+     * @param app the DAO executing application persistence operations
+     * @return a {@link CommandLineRunner} bean to execute tasks on startup
+     */
 	@Bean 
 	CommandLineRunner commandLineRunner(AppDao app) {
 		return runner -> {
@@ -65,110 +67,107 @@ public class HibernateDemoApplication {
 		};
 	}
 
-	// create student
+	// --- Student DAO Demos ---
+
+	/** 
+	 * Demonstrates persisting a new student. 
+	 */
 	private void createStudent(StudentDao studentDao){
-		// create the student object
 		System.out.println("Creating student information...");
 		Student student = new Student("Anshin", 
 									  "Suru", 
 									  "anshin.suru@example.com");
-	
-		// save the student object
+
 		System.out.println("Saving student information...");
 		studentDao.save(student);
 
-		//display the id of the saved student
 		System.out.println("Saved! Generated id: " + student.getId());
 	}
 
-	// read student based on the id
+	/** 
+	 * Demonstrates retrieving a single student by primary key. 
+	 */
 	private void readStudent(StudentDao studentDao){
-		// retrieve student based on the id
 		System.out.println("Retrieving student id 2...");
 		Student myStudent = studentDao.findById(2);
 		
-		// display student
 		System.out.println("Found the student: " + myStudent);
 	}
 
-	// query students
+	/** 
+	 * Demonstrates fetching all students. 
+	 */
 	private void queryStudents(StudentDao studentDao){
-		// get a list of students
 		List<Student> students = studentDao.findAll();
-		
-		// display list of students
 		for (Student s: students){
 			System.out.println(s);
 		}
 	}
 
-	// query students by last name
+	/** 
+	 * Demonstrates searching students by last name. 
+	 */	
 	private void queryStudentLastName(StudentDao studentDao){
-		// get a list of students
 		List<Student> students = studentDao.findByLastName("Uzumaki");
-		
-		// display list of students
 		for (Student s: students){
 			System.out.println(s);
 		}
 	}
 
-	// update student based on the id
+	/** 
+	 * Demonstrates updating student details. 
+	 */	
 	private void updateStudent(StudentDao studentDao){
-		// retrieve student based on the id
 		int id = 1;
 		System.out.println("Student ID: " + id);
 		Student student = studentDao.findById(id);
 		
-		// update student name 
 		System.out.println("Updating student name...");
 		student.setFirstName("Strawberry");
 	
-		// update the student
 		studentDao.update(student);
-		
-		// display updated student information
 		System.out.println("Updated student information: " + student);
 	}
 
-	// delete student based on the id
+	/** 
+	 * Demonstrates deleting a single student by primary key. 
+	 */	
 	private void deleteStudent(StudentDao studentDao){
-		// delete student based on the id
 		int id = 2;
 		System.out.println("Deleting ID: " + id);
-
-		// delete the student
 		studentDao.delete(id);
 	}
 
-	// delete all students
+	/** 
+	 * Demonstrates truncating/deleting all student records. 
+	 */
 	private void deleteAllStudents(StudentDao studentDao){
-		// delete all students
 		System.out.println("Deleting all student information...");
 		int rowsDeleted = studentDao.deleteAll();
 		System.out.println("Number of deleted rows: " + rowsDeleted);
 	}
 
-	// create instructor
+	// --- Instructor & InstructorDetail Demos ---
+
+	/** 
+	 * Demonstrates cascading save between Instructor and InstructorDetail. 
+	 */
 	private void createInstructor(AppDao app){
-		// create the instructor object
 		Instructor ins = new Instructor("Marie",
 									 "Curie", 
 									 "marie.curie@example.com");
 		InstructorDetail instructorDetails = 
 					new InstructorDetail("Science", "Discovering radium");	
 		
-		// associate the objects
 		ins.setInstructorDetails(instructorDetails);
 
-		// save the instructor
-		// this will also save the details object
-		// because of the CascadeType.ALL
 		System.out.println("Information saved!");
 		app.save(ins);
 	}
 
-	// find instructor
+	/** 
+	 * Demonstrates retrieving instructor and associated details by ID. 
+	 */
 	private void findInstructor(AppDao app) {
 		int id = 1;
 		System.out.println("Find id: " + id);
@@ -179,7 +178,9 @@ public class HibernateDemoApplication {
 		System.out.println("Details: " + ins.getInstructorDetails());
 	}
 
-	// delete instructor
+	/** 
+	 * Demonstrates deleting an instructor along with their associated courses. 
+	 */
 	private void deleteInstructor(AppDao app) {
 		int id = 1;
 		System.out.println("Delete id: " + id);
@@ -188,20 +189,20 @@ public class HibernateDemoApplication {
 		System.out.println("Deleted successfully!");
 	}
 
-	// find instructor details
+	/** 
+	 * Demonstrates bi-directional lookup from InstructorDetail to Instructor.
+	 */
 	private void findInstructorDetail(AppDao app) {
-		// get the instructor detail object
 		int id = 5;
 		InstructorDetail insDetails = app.findInstructorDetailById(id);
 
-		// print the instructor detail
 		System.out.println("Details: " + insDetails);
-
-		// print the associated instructor
 		System.out.println("Instructor: " + insDetails.getInstructor());
 	}
 
-	// delete instructor detail
+	/** 
+	 * Demonstrates deleting instructor details without deleting the instructor 
+	 */	
 	private void deleteInstructorDetail(AppDao app) {
 		int id = 8;
 		System.out.println("Delete id: " + id);
@@ -210,32 +211,33 @@ public class HibernateDemoApplication {
 		System.out.println("Deleted sucessfully");
 	}
 
-	// create instructor with courses
+	// --- One-to-Many Relationship Demos (Instructor <-> Course) ---
+
+	/** 
+	 * Demonstrates saving an instructor with multiple attached courses. 
+	 */
 	private void createInstructorWithCourses(AppDao app) {
-		// create the instructor and details
 		Instructor ins = new Instructor("Strawberry",
 										"Jam",
 										"july.nine@example.com");	
 		InstructorDetail instructorDetails = 
 						new InstructorDetail("Math", "Equation of you + me");
 
-		// associate the objects
 		ins.setInstructorDetails(instructorDetails);
 
-		// create courses
 		Course course1 = new Course("Scientology");
 		Course course2 = new Course("History");
 
-		// add courses to instructor
 		ins.add(course1);
 		ins.add(course2);
 
-		// save the instructor
 		System.out.println("Courses saved: " + ins.getCourses());
 		app.save(ins);
 	}
 
-	// find instructor with courses
+	/** 
+	 * Demonstrates lazy loading courses for a specific instructor. 
+	 */
 	private void findInstructorwithCourses(AppDao app) {
 		int id = 9;
 		System.out.println("Find instructor id: " + id);
@@ -246,28 +248,28 @@ public class HibernateDemoApplication {
 		System.out.println("Courses: " + ins.getCourses());
 	}
 
-	// find courses for instructor
+	/** 
+	 * Demonstrates querying courses explicitly by instructor ID. 
+	 */
 	private void findCoursesForInstructor(AppDao app) {
 		int id = 9;
 
-		// find the instructor
 		System.out.println("Find instructor id: " + id);
 		Instructor ins = app.findInstructorById(id);
 
 		System.out.println("Instructor: " + ins);
 
-		// find courses for instructor
 		System.out.println("Courses from id: " + id);
 		List<Course> courses = app.findCoursesByInstructorId(id);
 
-		// associate the objects
 		ins.setCourses(courses);
-
-		// get the courses
 		System.out.println(ins.getCourses());
 	}
 
-	// find instructor with courses via JOIN FETCH
+	/** 
+	 * Demonstrates fetching an instructor and 
+	 * courses in one SQL query using JOIN FETCH. 
+	 */
 	private void findInstructorWithCoursesJoinFetch(AppDao app) {
 		int id = 9;
 		System.out.println("Find instructor id: " + id);
@@ -278,23 +280,25 @@ public class HibernateDemoApplication {
 		System.out.println("Course: " + ins.getCourses());
 	}
 
-	// update instructor
+	/** 
+	 * Demonstrates updating an instructor entity. 
+	 */
 	private void updateInstructor(AppDao app) {
 		int id = 9;
 		System.out.println("Find instructor id: " + id);
 
 		Instructor ins = app.findInstructorById(id);
 
-		// change instructor's data
 		ins.setFirstName("Anshin");
 		ins.setLastName("Suru");
 
-		// update the data
 		System.out.println("Updated!");
 		app.update(ins);
 	}
 
-	// delete instructor
+	/** 
+	 * Demonstrates deleting an instructor while unlinking their courses. 
+	 */
 	private void deleteInstructorOnly(AppDao app) {
 		int id = 10;
 		System.out.println("Delete instructor: " + id);
@@ -304,55 +308,58 @@ public class HibernateDemoApplication {
 
 	}
 
-	// create course with reviews
+	// --- One-to-Many Uni-Directional Demos (Course -> Review) ---
+
+    /** 
+	 * Demonstrates creating a course with nested review entries. 
+	 */
 	private void createCourseAndReviews(AppDao app) {
-		// create a course
 		Course course = new Course("How to be Good at Nihongo");
 
-		// add some reviews
 		course.addReview(new Review("正しい文法と文章のパターンを理解する"));
 		course.addReview(new Review("会話で話す練習をする"));
 		course.addReview(new Review("毎日日本語を勉強する"));
 	
-		// save the course
 		System.out.println("Course saved!");
 		app.save(course);
 	}
 
-	// retrieve course with reviews
+	/** 
+	 * Demonstrates retrieving a course alongside its associated reviews. 
+	 */
 	private void retrieveCourseAndReviews(AppDao app) {
 		int id = 5;
 		System.out.println("Get course and reviews from id: " + id);
 
-		// get the course and reviews
 		Course course = app.findCourseAndReviewsByCourseId(id);
 	
-		// print the course
 		System.out.println(course);
-
-		// print the reviews
 		System.out.println(course.getReview());
 	}
 
-	// create course with students
+	// --- Many-to-Many Demos (Course <-> Student) ---
+
+	/** 
+	 * Demonstrates saving a course along with newly enrolled students. 
+	 */
 	private void createCourseAndStudents(AppDao app) {
-		// create a course
 		Course course = new Course("How be to Good at not being Bad");
 
-		// create the students
-		Student student1 = new Student("Anshin", "Suru", "suru.anshin@example.com");
-		Student student2 = new Student("Strawberry", "Jam", "strawberry.jam@example.com");
+		Student student1 = new Student("Anshin", 
+										"Suru", "suru.anshin@example.com");
+		Student student2 = new Student("Strawberry", 
+										"Jam", "strawberry.jam@example.com");
 
-		// add students to the course
 		course.addStudent(student1);
 		course.addStudent(student2);
 
-		// save the course and associated students
 		app.save(course);
 		System.out.println("Successfully enrolled!");
 	}
 
-	// find course with students
+	/** 
+	 * Demonstrates fetching a course and its enrolled students via JOIN FETCH. 
+	 */
 	private void findCourseAndStudents(AppDao app) {
 		int id = 7;
 		Course course = app.findCourseAndStudentByCourseId(id);
@@ -361,7 +368,9 @@ public class HibernateDemoApplication {
 		System.out.println("Students: " + course.getStudents());
 	}
 
-	// find student with courses
+	/** 
+	 * Demonstrates fetching a student and their registered courses. 
+	 */
 	private void findStudentAndCourse(AppDao app) {
 		int id = 11;
 		Student student = app.findStudentAndCoursesByStudentId(id);
@@ -370,7 +379,9 @@ public class HibernateDemoApplication {
 		System.out.println("Courses: " + student.getCourses());
 	}
 
-	// add more courses for student
+	/** 
+	 * Demonstrates adding multiple new courses to an existing student. 
+	 */
 	private void addMoreCoursesForStudent(AppDao app) {
 		int id = 12;
 		Student student = app.findStudentAndCoursesByStudentId(id);
@@ -388,7 +399,9 @@ public class HibernateDemoApplication {
 		app.update(student);
 	}
 
-	// delete course by ID
+	/** 
+	 * Demonstrates deleting a course by ID. 
+	 */
 	private void deleteCourseById(AppDao app) {
 		int id = 6;
 		System.out.println("Delete course: " + id);
@@ -397,7 +410,9 @@ public class HibernateDemoApplication {
 		System.out.println("Deleted successfully!");
 	}
 
-	// delete student by ID
+	/**
+	 * Demonstrates deleting a student by ID. 
+	 */
 	private void deleteStudentById(AppDao app) {
 		int id = 2;
 		System.out.println("Delete student: ");
