@@ -88,8 +88,12 @@ public class AppDaoImplement implements AppDao {
     @Override
     @Transactional 
     public void deleteInstructorDetail(int theId) {
-        InstructorDetail instructorDetails = em.find(InstructorDetail.class, theId);
-        instructorDetails.getInstructor().setInstructorDetails(null);
+        InstructorDetail instructorDetails = 
+                em.find(InstructorDetail.class, theId);
+
+        instructorDetails.getInstructor()
+                .setInstructorDetails(null);
+
         em.remove(instructorDetails);
     }
 
@@ -100,8 +104,9 @@ public class AppDaoImplement implements AppDao {
      */
     @Override 
     public List<Course> findCoursesByInstructorId(int theId) {
-        TypedQuery<Course> query = em.createQuery(
-                            "FROM Course WHERE instructor.id=data", Course.class);
+        TypedQuery<Course> query = 
+        em.createQuery("FROM Course WHERE instructor.id=data", Course.class);
+        
         query.setParameter("data", theId);
 
         List<Course> courses = query.getResultList();
