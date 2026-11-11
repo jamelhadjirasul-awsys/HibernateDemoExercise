@@ -8,80 +8,96 @@ import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 /**
- * StudentDaoImplement class implements the StudentDao interface and provides 
- * the implementation for CRUD operations on Student entities.
+ * Implementation of {@link StudentDao} providing database operations for 
+ * {@link Student} entities using JPA {@link EntityManager}.
  */
 @Repository 
 public class StudentDaoImplement implements StudentDao {
 
-    // define field for entity manager
     private EntityManager em;
 
-    // inject entity manager using constructor injection
+    /**
+     * Constructs the DAO implementation with injected EntityManager.
+     * @param em the JPA entity manager instance
+     */
     public StudentDaoImplement(EntityManager em) {
         this.em = em;
     }
 
-    // implement save method
+    /**
+     * Persists a new student entity in the database.
+     * @param theStudent the student entity to save
+     */
     @Override 
     @Transactional
     public void save(Student theStudent) {
         em.persist(theStudent);
     }
 
-    // implement findById method
+    /**
+     * Retrieves a student by primary key ID.
+     * @param id the student primary key
+     * @return the matching {@link Student} entity or null if not found
+     */
     @Override
     public Student findById(Integer id) {
         return em.find(Student.class, id);
     }
 
-    // implement findAll method
+    /**
+     * Fetches all students ordered by last name.
+     * @return list of all stored student entities
+     */
     @Override
     public List<Student> findAll() {
-        // create query
         TypedQuery<Student> query = 
             em.createQuery("FROM Student order by lastName", Student.class);
 
-        // return query results
         return query.getResultList();
     }
 
-    // implement findByLastName method
+    /**
+     * Searches for students with a matching last name.
+     * @param lastname the last name to search for
+     * @return list of matching student entities
+     */
     @Override
     public List<Student> findByLastName(String lastname) {
-        // create query
         TypedQuery<Student> query = 
             em.createQuery("FROM Student WHERE lastName=:data", Student.class);
 
-        // set query parameter
         query.setParameter("data", lastname);
-        // return query results
         return query.getResultList();
     }
 
-    // implement update method
+    /**
+     * Updates an existing student record in the database.
+     * @param theStudent the student entity containing updated values
+     */
     @Override
     @Transactional
     public void update(Student theStudent) {
         em.merge(theStudent);
     }
 
-    // implement delete method
+    /**
+     * Deletes a single student record by primary key ID.
+     * @param id the student ID to delete
+     */
     @Override
     @Transactional
     public void delete(Integer id) {
-        // retrieve student based on the id
         Student student = em.find(Student.class, id);
-        
-        // delete the student
         em.remove(student);
     }
 
-    // implement deleteAll method
+    /**
+     * Deletes all student records from the database table.
+     * @return the number of student rows deleted
+     */
     @Override
     @Transactional
     public int deleteAll() {
-        // create query
         int numRows = em.createQuery("DELETE FROM Student").executeUpdate();
         return numRows;
     }
