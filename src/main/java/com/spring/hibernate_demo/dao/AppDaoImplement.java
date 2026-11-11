@@ -106,7 +106,7 @@ public class AppDaoImplement implements AppDao {
     public List<Course> findCoursesByInstructorId(int theId) {
         TypedQuery<Course> query = 
         em.createQuery("FROM Course WHERE instructor.id=data", Course.class);
-        
+
         query.setParameter("data", theId);
 
         List<Course> courses = query.getResultList();
